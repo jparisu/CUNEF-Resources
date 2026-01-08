@@ -1,0 +1,7 @@
+name,year,genre,adult,budget,c_box_office,c_profit,c_performance
+Forrest Gump,1994,Family,no,55.0,678.23,12.33,great
+American History X,1998,Action,yes,20.0,23.88,1.19,expected
+Reservoir Dogs,1992,Mystery,yes,1.2,2.91,2.43,expected
+Heat,1995,Action,yes,60.0,187.44,3.12,expected
+Casino,1995,Action,yes,52.0,116.11,2.23,expected
+The Iron Giant,1999,Family,no,70.0,23.34,0.33,expected

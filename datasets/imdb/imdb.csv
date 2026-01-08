@@ -1,0 +1,19 @@
+name,year,genre,adult,budget,c_box_office,c_profit,c_performance
+Pulp Fiction,1994,Action,yes,8.0,213.93,26.74,great
+Forrest Gump,1994,Family,no,55.0,678.23,12.33,great
+Se7en,1995,Mystery,yes,33.0,327.33,9.92,great
+The Silence of the Lambs,1991,Mystery,yes,19.0,272.74,14.35,great
+Life Is Beautiful,1997,Family,no,20.0,230.1,11.5,great
+American History X,1998,Action,yes,20.0,23.88,1.19,expected
+The Usual Suspects,1995,Mystery,yes,6.0,23.34,3.89,expected
+Toy Story,1995,Family,no,30.0,394.44,13.15,great
+Reservoir Dogs,1992,Mystery,yes,1.2,2.91,2.43,expected
+Heat,1995,Action,yes,60.0,187.44,3.12,expected
+L.A. Confidential,1997,Mystery,yes,35.0,126.22,3.61,expected
+Casino,1995,Action,yes,52.0,116.11,2.23,expected
+Unforgiven,1992,Action,yes,14.4,159.17,11.05,great
+The Sixth Sense,1999,Mystery,no,40.0,672.81,16.82,great
+Fargo,1996,Mystery,yes,7.0,60.61,8.66,great
+Before Sunrise,1995,Family,yes,2.5,5.99,2.39,expected
+The Iron Giant,1999,Family,no,70.0,23.34,0.33,expected
+Dances with Wolves,1990,Action,no,22.0,424.21,19.28,great

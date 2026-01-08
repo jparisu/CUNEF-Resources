@@ -1,0 +1,203 @@
+name,year,genre,adult,budget,c_box_office,c_profit,c_performance
+The Shawshank Redemption,1994,Drama,yes,25.0,28.88,1.16,expected
+The Godfather,1972,Action,yes,6.0,250.34,41.72,great
+The Dark Knight,2008,Action,no,185.0,1006.23,5.44,great
+The Godfather Part II,1974,Action,yes,13.0,47.96,3.69,expected
+12 Angry Men,1957,Action,yes,0.35,0.0,0.0,expected
+Schindler's List,1993,History,yes,22.0,322.16,14.64,great
+The Lord of the Rings: The Return of the King,2003,Action,no,94.0,1146.46,12.2,great
+Pulp Fiction,1994,Action,yes,8.0,213.93,26.74,great
+The Lord of the Rings: The Fellowship of the Ring,2001,Action,no,93.0,898.2,9.66,great
+"The Good, the Bad and the Ugly",1966,Action,yes,1.2,25.25,21.04,great
+Forrest Gump,1994,Family,no,55.0,678.23,12.33,great
+Fight Club,1999,Drama,yes,63.0,101.21,1.61,expected
+The Lord of the Rings: The Two Towers,2002,Action,no,94.0,947.94,10.08,great
+Inception,2010,Fantasy,no,160.0,836.85,5.23,great
+Star Wars: Episode V - The Empire Strikes Back,1980,Fantasy,no,18.0,538.38,29.91,great
+The Matrix,1999,Fantasy,yes,63.0,467.22,7.42,great
+Goodfellas,1990,History,yes,25.0,47.04,1.88,expected
+One Flew Over the Cuckoo's Nest,1975,Drama,yes,3.0,109.11,36.37,great
+Se7en,1995,Mystery,yes,33.0,327.33,9.92,great
+Seven Samurai,1954,Action,yes,125.0,0.35,0.0,expected
+It's a Wonderful Life,1946,Fantasy,no,3.18,8.57,2.7,expected
+The Silence of the Lambs,1991,Mystery,yes,19.0,272.74,14.35,great
+City of God,2002,Action,yes,3.3,30.68,9.3,great
+Saving Private Ryan,1998,History,yes,70.0,482.35,6.89,great
+Interstellar,2014,Fantasy,no,165.0,773.87,4.69,expected
+Life Is Beautiful,1997,Family,no,20.0,230.1,11.5,great
+The Green Mile,1999,Fantasy,yes,60.0,286.8,4.78,expected
+Star Wars: Episode IV - A New Hope,1977,Fantasy,no,11.0,775.4,70.49,great
+Terminator 2: Judgment Day,1991,Fantasy,yes,102.0,520.88,5.11,great
+Back to the Future,1985,Fantasy,no,19.0,383.34,20.18,great
+Spirited Away,2001,Family,no,19.0,355.82,18.73,great
+The Pianist,2002,History,yes,35.0,120.07,3.43,expected
+Psycho,1960,Mystery,yes,0.81,32.05,39.72,great
+Parasite,2019,Mystery,yes,11.4,262.68,23.04,great
+Gladiator,2000,Action,yes,103.0,503.16,4.89,expected
+American History X,1998,Action,yes,20.0,23.88,1.19,expected
+The Departed,2006,Mystery,yes,90.0,291.48,3.24,expected
+The Usual Suspects,1995,Mystery,yes,6.0,23.34,3.89,expected
+The Prestige,2006,Fantasy,no,40.0,109.68,2.74,expected
+Whiplash,2014,Family,yes,3.3,49.4,14.97,great
+Casablanca,1942,History,no,0.95,4.63,4.87,expected
+Grave of the Fireflies,1988,History,yes,3.7,0.52,0.14,expected
+The Intouchables,2011,History,yes,9.5,426.59,44.9,great
+Modern Times,1936,Family,no,1.5,0.46,0.31,expected
+Once Upon a Time in the West,1968,Action,no,5.0,5.44,1.09,expected
+Rear Window,1954,Mystery,no,1.0,37.03,37.03,great
+Cinema Paradiso,1988,Family,no,5.0,13.02,2.6,expected
+Alien,1979,Fantasy,yes,11.0,106.29,9.66,great
+City Lights,1931,Family,no,1.5,0.05,0.03,expected
+Apocalypse Now,1979,History,yes,31.5,104.88,3.33,expected
+Memento,2000,Mystery,yes,9.0,40.05,4.45,expected
+Django Unchained,2012,Action,yes,100.0,426.07,4.26,expected
+Indiana Jones and the Raiders of the Lost Ark,1981,Action,no,18.0,389.93,21.66,great
+WALL·E,2008,Family,no,180.0,521.31,2.9,expected
+The Lives of Others,2006,Mystery,yes,2.0,77.36,38.68,great
+Sunset Blvd.,1950,Mystery,yes,1.75,0.3,0.17,expected
+Paths of Glory,1957,History,yes,0.94,0.01,0.01,expected
+The Shining,1980,Mystery,yes,19.0,47.34,2.49,expected
+The Great Dictator,1940,History,no,2.0,0.97,0.49,expected
+Avengers: Infinity War,2018,Fantasy,no,321.0,2052.42,6.39,great
+Witness for the Prosecution,1957,Mystery,yes,3.0,0.01,0.0,expected
+Aliens,1986,Fantasy,yes,18.5,131.06,7.08,great
+American Beauty,1999,Drama,yes,15.0,356.3,23.75,great
+Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb,1964,History,no,1.8,9.52,5.29,great
+The Dark Knight Rises,2012,Action,no,250.0,1081.17,4.32,expected
+Oldboy,2003,Mystery,yes,3.0,15.42,5.14,great
+Inglourious Basterds,2009,History,yes,70.0,321.46,4.59,expected
+Amadeus,1984,History,no,18.0,52.07,2.89,expected
+Coco,2017,Family,no,175.0,814.34,4.65,expected
+Toy Story,1995,Family,no,30.0,394.44,13.15,great
+Joker,2019,Mystery,yes,55.0,1074.46,19.54,great
+Braveheart,1995,History,yes,72.0,213.22,2.96,expected
+Avengers: Endgame,2019,Action,no,356.0,2799.44,7.86,great
+Once Upon a Time in America,1984,Action,yes,30.0,5.47,0.18,expected
+Singin' in the Rain,1952,Family,no,2.54,2.0,0.79,expected
+Requiem for a Dream,2000,Drama,yes,4.5,7.39,1.64,expected
+Toy Story 3,2010,Family,no,200.0,1067.32,5.34,great
+Star Wars: Episode VI - Return of the Jedi,1983,Fantasy,no,32.5,475.11,14.62,great
+Eternal Sunshine of the Spotless Mind,2004,Fantasy,yes,20.0,74.04,3.7,expected
+2001: A Space Odyssey,1968,Fantasy,no,12.0,65.89,5.49,great
+Reservoir Dogs,1992,Mystery,yes,1.2,2.91,2.43,expected
+Citizen Kane,1941,Mystery,no,0.84,1.65,1.96,expected
+Lawrence of Arabia,1962,History,yes,15.0,45.72,3.05,expected
+North by Northwest,1959,Mystery,yes,3.1,0.14,0.05,expected
+Vertigo,1958,Family,no,2.48,7.8,3.15,expected
+Amélie,2001,Family,yes,10.0,174.12,17.41,great
+The Apartment,1960,Family,yes,3.0,18.78,6.26,great
+A Clockwork Orange,1971,Fantasy,yes,2.2,26.96,12.25,great
+Double Indemnity,1944,Mystery,yes,0.93,0.01,0.02,expected
+Full Metal Jacket,1987,History,yes,30.0,46.36,1.55,expected
+Top Gun: Maverick,2022,Action,no,170.0,1488.73,8.76,great
+Scarface,1983,Action,yes,25.0,65.88,2.64,expected
+Incendies,2010,Mystery,yes,6.8,6.79,1.0,expected
+To Kill a Mockingbird,1962,Action,yes,2.0,0.6,0.3,expected
+Heat,1995,Action,yes,60.0,187.44,3.12,expected
+The Sting,1973,Comedy,no,5.5,156.0,28.36,great
+Up,2009,Family,no,175.0,735.1,4.2,expected
+A Separation,2011,Drama,no,0.5,22.93,45.85,great
+Taxi Driver,1976,Action,yes,1.3,28.57,21.98,great
+L.A. Confidential,1997,Mystery,yes,35.0,126.22,3.61,expected
+Die Hard,1988,Mystery,yes,28.0,141.6,5.06,great
+Snatch,2000,Comedy,yes,6.0,83.56,13.93,great
+Indiana Jones and the Last Crusade,1989,Action,no,48.0,474.17,9.88,great
+Bicycle Thieves,1948,Drama,yes,0.13,0.44,3.28,expected
+1917,2019,History,yes,95.0,384.48,4.05,expected
+Downfall,2004,History,yes,13.5,92.18,6.83,great
+For a Few Dollars More,1965,Action,yes,0.6,15.0,25.0,great
+Batman Begins,2005,Action,no,150.0,373.67,2.49,expected
+The Kid,1921,Family,yes,0.25,0.04,0.17,expected
+Some Like It Hot,1959,Family,yes,2.88,0.2,0.07,expected
+The Father,2020,Mystery,no,6.0,24.43,4.07,expected
+All About Eve,1950,Drama,yes,1.4,0.15,0.11,expected
+The Wolf of Wall Street,2013,History,yes,100.0,406.88,4.07,expected
+Green Book,2018,History,no,23.0,321.75,13.99,great
+Judgment at Nuremberg,1961,History,yes,3.0,0.01,0.0,expected
+Casino,1995,Action,yes,52.0,116.11,2.23,expected
+Ran,1985,History,yes,11.5,4.16,0.36,expected
+Pan's Labyrinth,2006,Fantasy,yes,19.0,83.86,4.41,expected
+The Truman Show,1998,Comedy,no,60.0,264.12,4.4,expected
+There Will Be Blood,2007,Drama,yes,25.0,76.18,3.05,expected
+Unforgiven,1992,Action,yes,14.4,159.17,11.05,great
+The Sixth Sense,1999,Mystery,no,40.0,672.81,16.82,great
+Shutter Island,2010,Mystery,yes,80.0,294.81,3.69,expected
+A Beautiful Mind,2001,History,no,58.0,316.79,5.46,great
+Jurassic Park,1993,Fantasy,no,63.0,1109.8,17.62,great
+The Treasure of the Sierra Madre,1948,Action,yes,3.0,5.01,1.67,expected
+Monty Python and the Holy Grail,1975,Fantasy,no,0.23,1.94,8.45,great
+The Great Escape,1963,History,yes,4.0,0.23,0.06,expected
+No Country for Old Men,2007,Mystery,yes,25.0,171.63,6.87,great
+Spider-Man: No Way Home,2021,Fantasy,no,200.0,1921.85,9.61,great
+Kill Bill: Vol. 1,2003,Action,yes,30.0,180.91,6.03,great
+Rashomon,1950,Mystery,yes,0.25,0.08,0.33,expected
+The Thing,1982,Fantasy,yes,15.0,19.63,1.31,expected
+Finding Nemo,2003,Family,no,94.0,941.64,10.02,great
+The Elephant Man,1980,History,no,5.0,26.02,5.2,great
+Chinatown,1974,Mystery,yes,6.0,29.23,4.87,expected
+Raging Bull,1980,History,yes,18.0,23.4,1.3,expected
+V for Vendetta,2005,Fantasy,yes,54.0,134.69,2.49,expected
+Gone with the Wind,1939,History,yes,3.98,402.38,101.18,great
+"Lock, Stock and Two Smoking Barrels",1998,Comedy,yes,0.96,3.75,3.91,expected
+Inside Out,2015,Family,no,175.0,858.85,4.91,expected
+Dial M for Murder,1954,Mystery,no,1.4,0.03,0.02,expected
+Howl's Moving Castle,2004,Family,no,24.0,237.54,9.9,great
+"Three Billboards Outside Ebbing, Missouri",2017,Comedy,yes,15.0,162.86,10.86,great
+The Bridge on the River Kwai,1957,History,no,3.0,27.2,9.07,great
+Trainspotting,1996,Drama,yes,1.5,16.77,11.18,great
+Prisoners,2013,Mystery,yes,46.0,122.13,2.65,expected
+Warrior,2011,Family,no,25.0,23.31,0.93,expected
+Fargo,1996,Mystery,yes,7.0,60.61,8.66,great
+Gran Torino,2008,Drama,yes,33.0,269.96,8.18,great
+Million Dollar Baby,2004,Family,no,30.0,216.76,7.23,great
+Blade Runner,1982,Fantasy,yes,28.0,41.72,1.49,expected
+The Gold Rush,1925,Comedy,yes,0.92,0.03,0.03,expected
+Before Sunrise,1995,Family,yes,2.5,5.99,2.39,expected
+12 Years a Slave,2013,History,yes,20.0,187.73,9.39,great
+Harry Potter and the Deathly Hallows: Part 2,2011,Fantasy,no,125.0,1342.36,10.74,great
+Ben-Hur,1959,Action,no,15.0,74.44,4.96,expected
+The Grand Budapest Hotel,2014,Comedy,yes,25.0,173.08,6.92,great
+The Deer Hunter,1978,History,yes,15.0,49.07,3.27,expected
+Barry Lyndon,1975,History,no,11.0,0.2,0.02,expected
+Hacksaw Ridge,2016,History,yes,40.0,180.56,4.51,expected
+Memories of Murder,2003,Mystery,yes,2.8,1.17,0.42,expected
+Mr. Smith Goes to Washington,1939,Comedy,yes,1.9,0.14,0.08,expected
+Mad Max: Fury Road,2015,Fantasy,yes,150.0,415.26,2.77,expected
+The Seventh Seal,1957,Fantasy,yes,0.15,0.31,2.07,expected
+Mary and Max,2009,Family,yes,8.24,1.74,0.21,expected
+How to Train Your Dragon,2010,Family,no,165.0,494.88,3.0,expected
+Room,2015,Mystery,yes,13.0,35.4,2.72,expected
+"Monsters, Inc.",2001,Family,no,115.0,579.71,5.04,great
+Jaws,1975,Mystery,no,7.0,476.51,68.07,great
+Dead Poets Society,1989,Comedy,no,16.4,235.86,14.38,great
+The Big Lebowski,1998,Comedy,yes,15.0,46.97,3.13,expected
+Hotel Rwanda,2004,History,no,17.5,33.88,1.94,expected
+Ford v Ferrari,2019,History,no,97.6,225.51,2.31,expected
+Rocky,1976,Family,no,0.96,117.25,122.14,great
+Platoon,1986,History,yes,6.0,138.55,23.09,great
+Ratatouille,2007,Family,no,150.0,623.73,4.16,expected
+Spotlight,2015,History,yes,20.0,98.69,4.93,expected
+The Terminator,1984,Fantasy,yes,6.4,78.37,12.25,great
+Logan,2017,Fantasy,yes,97.0,619.18,6.38,great
+Stand by Me,1986,Action,yes,8.0,52.29,6.54,great
+Rush,2013,History,yes,38.0,96.98,2.55,expected
+Network,1976,Drama,yes,3.8,23.69,6.23,great
+Into the Wild,2007,History,yes,15.0,56.68,3.78,expected
+The Wizard of Oz,1939,Fantasy,no,2.78,25.64,9.23,great
+Groundhog Day,1993,Fantasy,no,14.6,71.11,4.87,expected
+The Best Years of Our Lives,1946,History,yes,2.1,23.66,11.27,great
+The Exorcist,1973,Mystery,yes,11.0,441.31,40.12,great
+The Incredibles,2004,Family,no,92.0,631.61,6.87,great
+The Battle of Algiers,1966,History,yes,0.8,0.96,1.2,expected
+Pirates of the Caribbean: The Curse of the Black Pearl,2003,Fantasy,no,140.0,654.26,4.67,expected
+Amores Perros,2000,Mystery,yes,2.0,20.91,10.45,great
+Rebecca,1940,Mystery,yes,1.29,0.07,0.06,expected
+Cool Hand Luke,1967,Action,yes,3.2,0.0,0.0,expected
+The Sound of Music,1965,History,no,8.2,159.43,19.44,great
+It Happened One Night,1934,Family,yes,0.32,0.01,0.04,expected
+Life of Brian,1979,Comedy,yes,4.0,20.75,5.19,great
+The Iron Giant,1999,Family,no,70.0,23.34,0.33,expected
+The Help,2011,Drama,no,25.0,216.64,8.67,great
+Dersu Uzala,1975,History,no,4.0,0.01,0.0,expected
+Gandhi,1982,History,no,22.0,52.77,2.4,expected
+Dances with Wolves,1990,Action,no,22.0,424.21,19.28,great
