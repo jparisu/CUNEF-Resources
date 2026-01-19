@@ -27,16 +27,16 @@ class KNNClassifier(BaseClassifier):
                 choices=[("uniform", "uniform"), ("distance", "distance")],
             ),
             ArgSpec(key="p", label="Minkowski p", kind="int", default=2, min_value=1, max_value=5, step=1, help="p=2 is Euclidean; p=1 is Manhattan."),
-            ArgSpec(
-                key="step_fraction",
-                label="Step fraction",
-                kind="float",
-                default=0.2,
-                min_value=0.05,
-                max_value=1.0,
-                step=0.05,
-                help="In step-by-step training, each step adds this fraction of training points (refits).",
-            ),
+            # ArgSpec(
+            #     key="step_fraction",
+            #     label="Step fraction",
+            #     kind="float",
+            #     default=0.2,
+            #     min_value=0.05,
+            #     max_value=1.0,
+            #     step=0.05,
+            #     help="In step-by-step training, each step adds this fraction of training points (refits).",
+            # ),
         ]
 
     def _reset_impl(self) -> None:

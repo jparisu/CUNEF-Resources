@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 import streamlit as st
 
@@ -106,3 +106,30 @@ def render_arg_specs(
         raise ValueError(f"Unknown ArgSpec kind: {spec.kind}")
 
     return values
+
+
+def plotly_chart_stretch(container: Any, fig: Any, **kwargs: Any) -> Any:
+    """Render a Plotly chart that stretches to the container width.
+
+    Streamlit deprecated `use_container_width` in favor of `width="stretch"`.
+    This helper prefers the new API and falls back to the old one for
+    compatibility with older Streamlit versions.
+    """
+
+    try:
+        return container.plotly_chart(fig, width="stretch", theme=None, **kwargs)
+    except TypeError:
+        # Older Streamlit versions.
+        return container.plotly_chart(fig, use_container_width=True, theme=None, **kwargs)
+
+
+def button_stretch(container: Any, label: str, **kwargs: Any) -> bool:
+    """Render a full-width button.
+
+    Streamlit deprecated `use_container_width` in favor of `width="stretch"`.
+    """
+
+    try:
+        return bool(container.button(label, width="stretch", **kwargs))
+    except TypeError:
+        return bool(container.button(label, use_container_width=True, **kwargs))

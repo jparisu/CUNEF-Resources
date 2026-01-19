@@ -19,16 +19,16 @@ class GaussianNaiveBayesClassifier(BaseClassifier):
     def arg_spec(cls) -> List[ArgSpec]:
         return [
             ArgSpec(key="var_smoothing", label="var_smoothing", kind="float", default=1e-9, min_value=1e-12, max_value=1e-3, step=1e-10, help="Portion of the largest variance added to variances for stability."),
-            ArgSpec(
-                key="step_fraction",
-                label="Step fraction",
-                kind="float",
-                default=0.2,
-                min_value=0.05,
-                max_value=1.0,
-                step=0.05,
-                help="In step-by-step training, each step updates on this fraction of the training points.",
-            ),
+            # ArgSpec(
+            #     key="step_fraction",
+            #     label="Step fraction",
+            #     kind="float",
+            #     default=0.2,
+            #     min_value=0.05,
+            #     max_value=1.0,
+            #     step=0.05,
+            #     help="In step-by-step training, each step updates on this fraction of the training points.",
+            # ),
         ]
 
     def _reset_impl(self) -> None:

@@ -5,7 +5,7 @@ from typing import Any, Dict
 import streamlit as st
 
 from ml_classification_study.models.registry import get_model_cls, list_models
-from ml_classification_study.ui.components import render_arg_specs
+from ml_classification_study.ui.components import button_stretch, plotly_chart_stretch, render_arg_specs
 from ml_classification_study.ui.state import (
     KEY_DATASET_BUNDLE,
     KEY_DATASET_GEN_ARGS,
@@ -84,9 +84,9 @@ def render() -> None:
         eval_split = st.selectbox("Evaluate on", options=["test", "train"], index=0, key="eval_split")
 
         btn_cols = st.columns(3)
-        reset_clicked = btn_cols[0].button("Reset", use_container_width=True)
-        train_clicked = btn_cols[1].button("Train", use_container_width=True)
-        step_clicked = btn_cols[2].button("Train step", use_container_width=True)
+        reset_clicked = button_stretch(btn_cols[0], "Reset")
+        train_clicked = button_stretch(btn_cols[1], "Train")
+        step_clicked = button_stretch(btn_cols[2], "Train step", disabled=True)
 
         # Fingerprint model + dataset config for invalidation
         ds_id = st.session_state.get(KEY_DATASET_ID, "")
@@ -142,7 +142,7 @@ def render() -> None:
         # Decision boundary plot
         try:
             fig = plot_decision_boundary(model, bundle)
-            st.plotly_chart(fig, use_container_width=True)
+            plotly_chart_stretch(st, fig)
         except Exception as e:
             st.error(f"Decision boundary plotting failed: {e}")
 
@@ -169,7 +169,7 @@ def render() -> None:
         # Confusion matrix
         try:
             cm = model.confussion_matrix(Xe, ye)
-            st.plotly_chart(plot_confusion_matrix(cm), use_container_width=True)
+            plotly_chart_stretch(st, plot_confusion_matrix(cm))
         except Exception as e:
             st.error(f"Confusion matrix failed: {e}")
 
@@ -183,7 +183,7 @@ def render() -> None:
         if roc is None:
             st.info("ROC curve not available (needs predict_proba and both classes in the evaluation split).")
         else:
-            st.plotly_chart(plot_roc_curve(roc), use_container_width=True)
+            plotly_chart_stretch(st, plot_roc_curve(roc))
 
         # Trained parameters
         st.markdown("### Trained parameters")

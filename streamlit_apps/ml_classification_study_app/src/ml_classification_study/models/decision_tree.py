@@ -44,16 +44,16 @@ class DecisionTreeStudyClassifier(BaseClassifier):
                 kind="int", default=2, min_value=2, max_value=50, step=1),
             ArgSpec(key="min_samples_leaf", label="min_samples_leaf",
                 kind="int", default=1, min_value=1, max_value=50, step=1),
-            ArgSpec(
-                key="step_depth_cap",
-                label="step depth cap",
-                kind="int",
-                default=10,
-                min_value=1,
-                max_value=30,
-                step=1,
-                help="Used only when max_depth=None and step training is enabled.",
-            ),
+            # ArgSpec(
+            #     key="step_depth_cap",
+            #     label="step depth cap",
+            #     kind="int",
+            #     default=10,
+            #     min_value=1,
+            #     max_value=30,
+            #     step=1,
+            #     help="Used only when max_depth=None and step training is enabled.",
+            # ),
         ]
 
     def _reset_impl(self) -> None:

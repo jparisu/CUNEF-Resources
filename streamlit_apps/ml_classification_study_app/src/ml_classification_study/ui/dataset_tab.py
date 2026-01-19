@@ -7,7 +7,7 @@ import streamlit as st
 from ml_classification_study.datasets import PreprocessConfig, make_dataset_bundle
 from ml_classification_study.datasets.registry import get_dataset_cls, list_datasets
 from ml_classification_study.types import DatasetBundle
-from ml_classification_study.ui.components import render_arg_specs
+from ml_classification_study.ui.components import plotly_chart_stretch, render_arg_specs
 from ml_classification_study.ui.state import (
     KEY_DATASET_BUNDLE,
     KEY_DATASET_GEN_ARGS,
@@ -109,7 +109,7 @@ def render() -> None:
         st.session_state[KEY_DATASET_BUNDLE] = bundle
 
         fig = plot_dataset_scatter(bundle)
-        st.plotly_chart(fig, use_container_width=True)
+        plotly_chart_stretch(st, fig)
 
         meta = bundle.meta or {}
         removed_train = meta.get("removed_train", 0)
