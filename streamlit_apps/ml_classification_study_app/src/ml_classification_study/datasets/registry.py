@@ -3,7 +3,14 @@ from __future__ import annotations
 from typing import Dict, List, Type
 
 from .base import DatasetGenerator
-from .generators import Gaussian2Class, NormalVsExponential, RandomLinearSeparable, Xor2D
+from .generators import (
+    Circular2D,
+    Gaussian2Class,
+    NormalVsExponential,
+    RandomLinearSeparable,
+    Spiral2D,
+    Xor2D,
+)
 
 
 DATASET_REGISTRY: Dict[str, Type[DatasetGenerator]] = {
@@ -11,6 +18,8 @@ DATASET_REGISTRY: Dict[str, Type[DatasetGenerator]] = {
     Xor2D.id: Xor2D,
     NormalVsExponential.id: NormalVsExponential,
     RandomLinearSeparable.id: RandomLinearSeparable,
+    Circular2D.id: Circular2D,
+    Spiral2D.id: Spiral2D,
 }
 
 

@@ -25,9 +25,9 @@ class DatasetGenerator(ABC):
                 label="Number of points",
                 kind="int",
                 default=300,
-                min_value=50,
+                min_value=10    ,
                 max_value=5000,
-                step=50,
+                step=10,
                 help="Total number of points (both classes combined).",
             ),
             ArgSpec(
@@ -54,4 +54,3 @@ class DatasetGenerator(ABC):
     @abstractmethod
     def generate(self, **kwargs: Any) -> tuple[np.ndarray, np.ndarray]:
         """Return X (n,2) and y (n,) with classes {0,1}."""
-
