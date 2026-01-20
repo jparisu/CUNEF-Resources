@@ -78,7 +78,7 @@ def render() -> None:
         test_size = st.slider(
             "Test split fraction",
             min_value=0.05,
-            max_value=0.5,
+            max_value=0.95,
             value=0.25,
             step=0.05,
             key="pre:test_size",
