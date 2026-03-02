@@ -1,0 +1,9 @@
+eo:
+  hundo: { en: "dog", es: "perro", pos: "noun" }
+  bona:  { en: "good", es: "bueno", pos: "adj" }
+en:
+  dog: hundo
+  good: bona
+es:
+  perro: hundo
+  bueno: bona

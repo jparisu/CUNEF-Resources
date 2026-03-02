@@ -3,10 +3,10 @@ requires = ["hatchling>=1.24"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ml-classification-study-app"
+name = "path-finding-game-app"
 version = "0.1.0"
-description = "Streamlit app to explore ML classification models on synthetic 2D datasets"
-readme = "ml_classification_study_app.md"
+description = "Streamlit app to explore Path Finding games."
+readme = "path_finding_game_app.md"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
 authors = [{name = jparisu}]

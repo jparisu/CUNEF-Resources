@@ -1,0 +1,13 @@
+pos_endings:
+  o: { en: "noun", es: "sustantivo" }
+  a: { en: "adjective", es: "adjetivo" }
+  e: { en: "adverb", es: "adverbio" }
+verb_endings:
+  as: { en: "present tense verb", es: "verbo en presente" }
+  is: { en: "past tense verb", es: "verbo en pasado" }
+  os: { en: "future tense verb", es: "verbo en futuro" }
+  us: { en: "conditional verb", es: "verbo condicional" }
+  u:  { en: "imperative/volitive verb", es: "imperativo/volitivo" }
+markers:
+  j:  { en: "plural", es: "plural" }
+  n:  { en: "accusative (direct object / motion)", es: "acusativo (objeto directo / movimiento)" }
