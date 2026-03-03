@@ -100,6 +100,16 @@ def fig_decision_boundary_1d(
     )
 
     _add_scatter_px(fig, df, d=1)
+    fig.add_trace(
+        go.Scatter(
+            x=x_grid,
+            y=p_grid,
+            mode="lines",
+            name="sigmoid(x)",
+            line=dict(width=3),
+            hovertemplate="x=%{x:.3f}<br>P(class=1)=%{y:.4f}<extra></extra>",
+        )
+    )
 
     if boundary_x is not None and np.isfinite(boundary_x):
         fig.add_shape(
@@ -114,9 +124,10 @@ def fig_decision_boundary_1d(
     fig.update_layout(
         title="Decision boundary (1D) and probability field",
         xaxis_title="Feature x1",
-        yaxis_title="Class (0/1)",
+        yaxis_title="Class / Probability",
     )
-    fig.update_yaxes(tickmode="array", tickvals=[0, 1], range=[-0.5, 1.5])
+    fig.update_xaxes(range=[float(np.min(x_grid)), float(np.max(x_grid))], fixedrange=True)
+    fig.update_yaxes(tickmode="array", tickvals=[0, 1], range=[-0.5, 1.5], fixedrange=True)
     return fig
 
 
@@ -174,6 +185,8 @@ def fig_decision_boundary_2d(
         xaxis_title="Feature x1",
         yaxis_title="Feature x2",
     )
+    fig.update_xaxes(range=[float(np.min(x1_vals)), float(np.max(x1_vals))], fixedrange=True)
+    fig.update_yaxes(range=[float(np.min(x2_vals)), float(np.max(x2_vals))], fixedrange=True)
     return fig
 
 
@@ -374,6 +387,26 @@ def fig_metrics_history(history: list[Dict[str, Any]]) -> go.Figure:
         yaxis_title="Metric value",
         yaxis=dict(range=[0.0, 1.0]),
         legend=dict(orientation="h"),
+    )
+    return fig
+
+
+def fig_loss_history(history: list[Dict[str, Any]]) -> go.Figure:
+    fig = go.Figure()
+    if not history:
+        fig.update_layout(title="Loss J evolution (no training history yet)")
+        return fig
+
+    it = [h["iter"] for h in history]
+    train_j = [h.get("train_loss", float("nan")) for h in history]
+    test_j = [h.get("test_loss", float("nan")) for h in history]
+
+    fig.add_trace(go.Scatter(x=it, y=train_j, mode="lines+markers", name="Train J"))
+    fig.add_trace(go.Scatter(x=it, y=test_j, mode="lines+markers", name="Test J"))
+    fig.update_layout(
+        title="Loss J evolution (train vs test)",
+        xaxis_title="Iteration",
+        yaxis_title="J",
     )
     return fig
 

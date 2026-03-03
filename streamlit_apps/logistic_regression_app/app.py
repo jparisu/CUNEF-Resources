@@ -25,6 +25,7 @@ from logistic_regression.viz import (
     fig_decision_boundary_2d,
     fig_params_history,
     fig_metrics_history,
+    fig_loss_history,
     fig_roc,
     fig_loss_surface_3d,
 )
@@ -51,7 +52,7 @@ def default_model_config() -> Dict[str, Any]:
         "lr": 0.1,
         "n_iters": 200,
         "reg_type": "None",
-        "reg_strength": 0.0,
+        "reg_strength": 0.0001,
         "batch_size": 32,
     }
 
@@ -88,7 +89,7 @@ def _init_widget_state() -> None:
     _ensure_key("lr", 0.1)
     _ensure_key("n_iters", 200)
     _ensure_key("reg_type", "None")
-    _ensure_key("reg_strength", 0.0)
+    _ensure_key("reg_strength", 0.0001)
     _ensure_key("batch_size", 32)
     _ensure_key("dynamic_fps", 8)
     _ensure_key("param_arrow_scale", 8.0)
@@ -96,6 +97,7 @@ def _init_widget_state() -> None:
     _ensure_key("surface_grid_n", 45)
     _ensure_key("surface_w_idx", 0)
     _ensure_key("surface_live_during_dynamic", False)
+    _ensure_key("surface_full_extent", False)
 
     # Parameter widgets (current model parameters)
     _ensure_key("w0", 0.0)
@@ -202,10 +204,17 @@ def _ensure_core_state() -> None:
     _ensure_key("dynamic_train", False)
     _ensure_key("params_initialized", False)
 
+    if np.asarray(st.session_state.X).size == 0 or np.asarray(st.session_state.y).size == 0:
+        applied = sanitize_dataset_config(st.session_state.ds_cfg_applied)
+        _regenerate_dataset(applied)
+
     if not bool(st.session_state.params_initialized):
         d = int(sanitize_dataset_config(st.session_state.ds_cfg_applied)["n_features"])
         _randomize_model_params_from_seed(seed=int(st.session_state.seed), n_features=d)
         st.session_state.params_initialized = True
+
+    # Guard against stale out-of-range values from prior sessions/app versions.
+    st.session_state.reg_strength = min(10.0, max(0.0001, float(st.session_state.reg_strength)))
 
 
 def _maybe_apply_dataset_updates() -> None:
@@ -319,8 +328,21 @@ def _record_history(model: LogisticRegressionScratch) -> None:
     yhat_te = model.predict(Xte) if Xte.size else np.array([], dtype=int)
     m_tr = classification_metrics(ytr, yhat_tr)
     m_te = classification_metrics(yte, yhat_te)
+    cfg = _current_model_config_from_widgets()
+    reg_type = str(cfg["reg_type"])
+    reg_strength = float(cfg["reg_strength"])
+    train_loss = model.loss(Xtr, ytr, reg_type=reg_type, reg_strength=reg_strength) if Xtr.size else float("nan")
+    test_loss = model.loss(Xte, yte, reg_type=reg_type, reg_strength=reg_strength) if Xte.size else float("nan")
 
-    st.session_state.history_metrics.append({"iter": it, "train": m_tr, "test": m_te})
+    st.session_state.history_metrics.append(
+        {
+            "iter": it,
+            "train": m_tr,
+            "test": m_te,
+            "train_loss": float(train_loss),
+            "test_loss": float(test_loss),
+        }
+    )
 
 
 def _next_step_projection(
@@ -426,6 +448,14 @@ def stop_dynamic_train() -> None:
     st.session_state.dynamic_train = False
 
 
+def enable_surface_full_extent() -> None:
+    st.session_state.surface_full_extent = True
+
+
+def disable_surface_full_extent() -> None:
+    st.session_state.surface_full_extent = False
+
+
 
 def _rerun() -> None:
     # Compatibility with older Streamlit versions
@@ -463,7 +493,26 @@ if bool(st.session_state.dynamic_train):
 
 
 # Layout: left configuration column, right visualization column
-left, main = st.columns([1.1, 2.4], gap="large")
+st.markdown(
+    """
+    <style>
+    .st-key-lr_split_layout > div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        max-height: calc(100vh - 5.5rem);
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+    @media (max-width: 900px) {
+        .st-key-lr_split_layout > div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+            max-height: none;
+            overflow-y: visible;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+layout = st.container(key="lr_split_layout")
+left, main = layout.columns([22, 78], gap="large")
 
 
 # -----------------------------
@@ -471,20 +520,23 @@ left, main = st.columns([1.1, 2.4], gap="large")
 # -----------------------------
 with left:
     st.markdown("## Configuration")
+    cfg_tabs = st.tabs(["General", "Dataset", "Model", "Parameters", "Training"])
 
-    with st.expander("General", expanded=True):
+    with cfg_tabs[0]:
         st.number_input("Seed", min_value=0, max_value=10000, step=1, key="seed")
+        st.caption(
+            f"Iteration progress: {int(st.session_state.iter)} / {int(st.session_state.n_iters)}"
+        )
 
-    with st.expander("Dataset", expanded=True):
+    with cfg_tabs[1]:
         st.checkbox("Dynamic dataset modification", key="ds_dynamic")
         if not bool(st.session_state.ds_dynamic):
-            st.caption("Dynamic mode is OFF: changing dataset sliders will not regenerate the dataset until you re-enable it.")
+            st.caption("Dynamic mode is OFF: widget changes are pending until dynamic mode is re-enabled.")
 
         st.slider("Number of samples", min_value=10, max_value=1000, step=10, key="ds_n_samples")
         st.slider("Balanced (proportion of class 1)", min_value=0.0, max_value=1.0, step=0.01, key="ds_balance")
         st.radio("Number of features", options=[1, 2], horizontal=True, key="ds_n_features")
 
-        # Means/stds
         d = int(st.session_state.ds_n_features)
         for c in [0, 1]:
             st.markdown(f"**Class {c}**")
@@ -493,11 +545,16 @@ with left:
                 with cols[0]:
                     st.number_input(f"Mean (feature {f+1})", key=f"ds_mean_c{c}_f{f}", step=0.1, format="%.3f")
                 with cols[1]:
-                    st.number_input(f"Std (feature {f+1})", key=f"ds_std_c{c}_f{f}", step=0.1, min_value=1e-6, format="%.3f")
+                    st.number_input(
+                        f"Std (feature {f+1})",
+                        key=f"ds_std_c{c}_f{f}",
+                        step=0.1,
+                        min_value=1e-6,
+                        format="%.3f",
+                    )
 
         st.slider("Train/Test split (train proportion)", min_value=0.0, max_value=0.9, step=0.01, key="ds_train_split")
 
-        # Show currently applied config (may differ when dynamic is OFF)
         applied = sanitize_dataset_config(st.session_state.ds_cfg_applied)
         pending = _pending_dataset_config_from_widgets()
         st.markdown("**Applied vs Pending**")
@@ -508,32 +565,31 @@ with left:
                     "balance": applied["balance"],
                     "n_features": applied["n_features"],
                     "train_split": applied["train_split"],
-                    "means0": applied["means0"],
-                    "stds0": applied["stds0"],
-                    "means1": applied["means1"],
-                    "stds1": applied["stds1"],
                 },
                 "pending": {
                     "n_samples": pending["n_samples"],
                     "balance": pending["balance"],
                     "n_features": pending["n_features"],
                     "train_split": pending["train_split"],
-                    "means0": pending["means0"],
-                    "stds0": pending["stds0"],
-                    "means1": pending["means1"],
-                    "stds1": pending["stds1"],
                 },
             }
         )
 
-    with st.expander("Model", expanded=True):
-        st.slider("Learning rate", min_value=0.0001, max_value=10.0, value=float(st.session_state.lr), step=0.0001, key="lr")
+    with cfg_tabs[2]:
+        st.number_input(
+            "Learning rate (alpha)",
+            min_value=1e-8,
+            max_value=10.0,
+            step=0.1,
+            format="%.8f",
+            key="lr",
+        )
         st.slider("Number of iterations (target)", min_value=1, max_value=10000, step=1, key="n_iters")
         st.selectbox("Regularization", options=["None", "L1", "L2"], key="reg_type")
-        st.slider("Regularization strength (λ)", min_value=0.0001, max_value=10.0, step=0.0001, key="reg_strength")
+        st.slider("Regularization strength (lambda)", min_value=0.0001, max_value=10.0, step=0.0001, key="reg_strength")
         st.slider("Batch size", min_value=1, max_value=1000, step=1, key="batch_size")
 
-    with st.expander("Parameters", expanded=True):
+    with cfg_tabs[3]:
         d_applied = int(sanitize_dataset_config(st.session_state.ds_cfg_applied)["n_features"])
         st.slider("w0", min_value=-10.0, max_value=10.0, step=0.01, key="w0")
         if d_applied == 2:
@@ -543,20 +599,19 @@ with left:
         w_now, b_now = _model_params_from_widgets(d_applied)
         st.code(f"Current parameters:\nw = {w_now}\nb = {b_now:.6f}")
 
-    with st.expander("Training", expanded=True):
-        st.button("Train All", on_click=train_all)
-        st.button("Step", on_click=training_step)
-        st.button("Reset", on_click=reset_all)
-        st.slider("Arrow amplification", min_value=1.0, max_value=40.0, step=0.5, key="param_arrow_scale")
-        st.slider("3D gradient arrow amplification", min_value=1.0, max_value=40.0, step=0.5, key="surface_arrow_scale")
+    with cfg_tabs[4]:
+        action_cols = st.columns(3)
+        with action_cols[0]:
+            st.button("Train All", on_click=train_all, use_container_width=True)
+        with action_cols[1]:
+            st.button("Step", on_click=training_step, use_container_width=True)
+        with action_cols[2]:
+            st.button("Reset", on_click=reset_all, use_container_width=True)
 
-        st.markdown(f"**Iteration:** {int(st.session_state.iter)} / {int(st.session_state.n_iters)}")
-
-    with st.expander("Dynamic training playback", expanded=False):
         if not bool(st.session_state.dynamic_train):
-            st.button("Start dynamic train", on_click=start_dynamic_train)
+            st.button("Start dynamic train", on_click=start_dynamic_train, use_container_width=True)
         else:
-            st.button("Pause dynamic train", on_click=stop_dynamic_train)
+            st.button("Pause dynamic train", on_click=stop_dynamic_train, use_container_width=True)
         st.slider("Frame rate (FPS)", min_value=1, max_value=30, step=1, key="dynamic_fps")
 
 
@@ -566,90 +621,91 @@ with left:
 with main:
     st.markdown("## Visualization")
 
-    # Build model and get data
     applied_cfg = sanitize_dataset_config(st.session_state.ds_cfg_applied)
     d_applied = int(applied_cfg["n_features"])
     X = st.session_state.X
     y = st.session_state.y
     df = st.session_state.df
     model = _get_model()
+    cfg_now = _current_model_config_from_widgets()
 
     Xtr, ytr, Xte, yte = _get_train_test()
-
-    # Current evaluation metrics
     yhat_tr = model.predict(Xtr) if Xtr.size else np.array([], dtype=int)
     yhat_te = model.predict(Xte) if Xte.size else np.array([], dtype=int)
     m_tr = classification_metrics(ytr, yhat_tr)
     m_te = classification_metrics(yte, yhat_te)
 
-    with st.expander("Dataset visualization", expanded=True):
+    reg_type_now = str(cfg_now["reg_type"])
+    reg_strength_now = float(cfg_now["reg_strength"])
+    j_tr_now = model.loss(Xtr, ytr, reg_type=reg_type_now, reg_strength=reg_strength_now) if Xtr.size else float("nan")
+    j_te_now = model.loss(Xte, yte, reg_type=reg_type_now, reg_strength=reg_strength_now) if Xte.size else float("nan")
+
+    viz_tabs = st.tabs(["Data", "Boundary", "Training Dynamics", "Loss Plane", "J Progression", "Evaluation"])
+
+    with viz_tabs[0]:
         if df is None or len(df) == 0:
             st.warning("Dataset is empty.")
+        elif d_applied == 1:
+            c1, c2 = st.columns(2)
+            with c1:
+                st.plotly_chart(fig_dataset_1d(df), use_container_width=True)
+            with c2:
+                st.plotly_chart(fig_hist_1d(df), use_container_width=True)
         else:
-            if d_applied == 1:
-                c1, c2 = st.columns(2)
-                with c1:
-                    st.plotly_chart(fig_dataset_1d(df), use_container_width=True)
-                with c2:
-                    st.plotly_chart(fig_hist_1d(df), use_container_width=True)
-            else:
-                st.plotly_chart(fig_dataset_2d(df), use_container_width=True)
+            st.plotly_chart(fig_dataset_2d(df), use_container_width=True)
 
-    with st.expander("Decision boundary", expanded=True):
+    with viz_tabs[1]:
         if df is None or len(df) == 0:
             st.warning("Dataset is empty.")
+        elif d_applied == 1:
+            x1 = df["x1"].to_numpy(dtype=float)
+            x_min, x_max = float(np.min(x1)), float(np.max(x1))
+            pad = 0.2 * max(1e-6, (x_max - x_min))
+            x_grid = np.linspace(x_min - pad, x_max + pad, 300)
+            p_grid = model.predict_proba(x_grid.reshape(-1, 1))
+
+            w = model.w[0]
+            boundary_x = None
+            if abs(w) > 1e-12:
+                boundary_x = -model.b / w
+
+            st.plotly_chart(
+                fig_decision_boundary_1d(df, x_grid=x_grid, p_grid=p_grid, boundary_x=boundary_x),
+                use_container_width=True,
+            )
         else:
-            if d_applied == 1:
-                x1 = df["x1"].to_numpy(dtype=float)
-                x_min, x_max = float(np.min(x1)), float(np.max(x1))
-                pad = 0.2 * max(1e-6, (x_max - x_min))
-                x_grid = np.linspace(x_min - pad, x_max + pad, 300)
-                p_grid = model.predict_proba(x_grid.reshape(-1, 1))
+            x1 = df["x1"].to_numpy(dtype=float)
+            x2 = df["x2"].to_numpy(dtype=float)
+            x1_min, x1_max = float(np.min(x1)), float(np.max(x1))
+            x2_min, x2_max = float(np.min(x2)), float(np.max(x2))
+            pad1 = 0.15 * max(1e-6, (x1_max - x1_min))
+            pad2 = 0.15 * max(1e-6, (x2_max - x2_min))
 
-                w = model.w[0]
-                boundary_x = None
-                if abs(w) > 1e-12:
-                    boundary_x = -model.b / w
+            x1_vals = np.linspace(x1_min - pad1, x1_max + pad1, 120)
+            x2_vals = np.linspace(x2_min - pad2, x2_max + pad2, 120)
+            xx, yy = np.meshgrid(x1_vals, x2_vals)
+            grid = np.c_[xx.ravel(), yy.ravel()]
+            pp = model.predict_proba(grid).reshape(xx.shape)
 
-                st.plotly_chart(
-                    fig_decision_boundary_1d(df, x_grid=x_grid, p_grid=p_grid, boundary_x=boundary_x),
-                    use_container_width=True,
-                )
-            else:
-                x1 = df["x1"].to_numpy(dtype=float)
-                x2 = df["x2"].to_numpy(dtype=float)
-                x1_min, x1_max = float(np.min(x1)), float(np.max(x1))
-                x2_min, x2_max = float(np.min(x2)), float(np.max(x2))
-                pad1 = 0.15 * max(1e-6, (x1_max - x1_min))
-                pad2 = 0.15 * max(1e-6, (x2_max - x2_min))
+            w0, w1 = float(model.w[0]), float(model.w[1])
+            b = float(model.b)
+            boundary: Dict[str, Any] = {"type": "none"}
+            if abs(w1) > 1e-12:
+                x1_line = np.array([x1_vals.min(), x1_vals.max()])
+                x2_line = -(w0 * x1_line + b) / w1
+                boundary = {"type": "line", "x1_line": x1_line, "x2_line": x2_line}
+            elif abs(w0) > 1e-12:
+                boundary = {"type": "vertical", "x": -b / w0}
 
-                x1_vals = np.linspace(x1_min - pad1, x1_max + pad1, 120)
-                x2_vals = np.linspace(x2_min - pad2, x2_max + pad2, 120)
-                xx, yy = np.meshgrid(x1_vals, x2_vals)
-                grid = np.c_[xx.ravel(), yy.ravel()]
-                pp = model.predict_proba(grid).reshape(xx.shape)
+            st.plotly_chart(
+                fig_decision_boundary_2d(df, x1_vals=x1_vals, x2_vals=x2_vals, p_grid=pp, boundary=boundary),
+                use_container_width=True,
+            )
 
-                w0, w1 = float(model.w[0]), float(model.w[1])
-                b = float(model.b)
-                boundary: Dict[str, Any] = {"type": "none"}
-                if abs(w1) > 1e-12:
-                    x1_line = np.array([x1_vals.min(), x1_vals.max()])
-                    x2_line = -(w0 * x1_line + b) / w1
-                    boundary = {"type": "line", "x1_line": x1_line, "x2_line": x2_line}
-                elif abs(w0) > 1e-12:
-                    boundary = {"type": "vertical", "x": -b / w0}
-
-                st.plotly_chart(
-                    fig_decision_boundary_2d(df, x1_vals=x1_vals, x2_vals=x2_vals, p_grid=pp, boundary=boundary),
-                    use_container_width=True,
-                )
-
-    with st.expander("Parameters evolution", expanded=True):
+    with viz_tabs[2]:
         batch_idx = _ensure_next_batch_indices()
-        cfg = _current_model_config_from_widgets()
-        next_step = _next_step_projection(model, batch_idx, cfg)
+        next_step = _next_step_projection(model, batch_idx, cfg_now)
 
-        # Plot history
         st.plotly_chart(
             fig_params_history(
                 history=st.session_state.history_params,
@@ -663,12 +719,9 @@ with main:
             use_container_width=True,
         )
 
-        # Preview gradient on the *next* batch (consistent with Step)
         if batch_idx is None or len(batch_idx) == 0:
             st.info("No train batch available (train set empty).")
         else:
-            Xb = st.session_state.X[batch_idx]
-            yb = st.session_state.y[batch_idx]
             dw = next_step["dw"]
             db = next_step["db"]
 
@@ -680,7 +733,7 @@ with main:
             st.latex(r"\frac{\partial J}{\partial b} = \frac{1}{m}\sum_{i=1}^m (\hat{y}^{(i)}-y^{(i)})")
             st.latex(r"w \leftarrow w - \alpha\,\frac{\partial J}{\partial w},\quad b \leftarrow b - \alpha\,\frac{\partial J}{\partial b}")
 
-            lr = float(cfg["lr"])
+            lr = float(cfg_now["lr"])
             w_next = model.w - lr * dw
             b_next = model.b - lr * db
 
@@ -695,24 +748,23 @@ with main:
                     }
                 )
             rows.append({"parameter": "b", "current": float(model.b), "dJ/db": float(db), "next (after 1 step)": float(b_next)})
-
-            st.markdown("### Derivatives on the next batch")
             st.dataframe(rows, use_container_width=True)
-
-            st.caption(f"Batch used for preview: {len(batch_idx)} samples (respects batch size setting).")
+            st.caption(f"Batch used for preview: {len(batch_idx)} samples.")
 
         if st.session_state.last_step is not None:
             st.markdown("### Last training step (executed)")
             st.write(st.session_state.last_step)
 
-    with st.expander("Loss surface 3D (J vs weight and b)", expanded=True):
+    with viz_tabs[3]:
         if Xtr.size == 0 or ytr.size == 0:
             st.info("Train set is empty, so the loss surface cannot be computed.")
         else:
-            st.checkbox(
-                "Update surface during dynamic training (slower)",
-                key="surface_live_during_dynamic",
-            )
+            st.checkbox("Update surface during dynamic training (slower)", key="surface_live_during_dynamic")
+            if not bool(st.session_state.surface_full_extent):
+                st.button("Expand plane to full range [-10, 10]", on_click=enable_surface_full_extent)
+            else:
+                st.button("Use adaptive plane range", on_click=disable_surface_full_extent)
+
             pause_surface = bool(st.session_state.dynamic_train) and not bool(st.session_state.surface_live_during_dynamic)
             if pause_surface:
                 st.info(
@@ -731,38 +783,36 @@ with main:
                 w_idx = max(0, min(d_applied - 1, int(st.session_state.surface_w_idx)))
                 st.slider("Surface resolution", min_value=21, max_value=101, step=2, key="surface_grid_n")
 
-                cfg = _current_model_config_from_widgets()
-                reg_type = str(cfg["reg_type"])
-                reg_strength = float(cfg["reg_strength"])
-
                 model_tmp = LogisticRegressionScratch(n_features=d_applied, w=model.w.copy(), b=float(model.b))
                 current_w = float(model.w[w_idx])
                 current_b = float(model.b)
-
                 history = list(st.session_state.history_params)
                 hist_w = [float(h["w"][w_idx]) for h in history if len(h.get("w", [])) > w_idx]
                 hist_b = [float(h["b"]) for h in history]
                 all_w = hist_w + [current_w]
                 all_b = hist_b + [current_b]
 
-                w_min, w_max = min(all_w), max(all_w)
-                b_min, b_max = min(all_b), max(all_b)
-                span_w = max(0.8, w_max - w_min)
-                span_b = max(0.8, b_max - b_min)
+                if bool(st.session_state.surface_full_extent):
+                    w_vals = np.linspace(-10.0, 10.0, int(st.session_state.surface_grid_n))
+                    b_vals = np.linspace(-10.0, 10.0, int(st.session_state.surface_grid_n))
+                else:
+                    w_min, w_max = min(all_w), max(all_w)
+                    b_min, b_max = min(all_b), max(all_b)
+                    span_w = max(0.8, w_max - w_min)
+                    span_b = max(0.8, b_max - b_min)
+                    w_vals = np.linspace(w_min - 0.5 * span_w, w_max + 0.5 * span_w, int(st.session_state.surface_grid_n))
+                    b_vals = np.linspace(b_min - 0.5 * span_b, b_max + 0.5 * span_b, int(st.session_state.surface_grid_n))
 
-                w_vals = np.linspace(w_min - 0.5 * span_w, w_max + 0.5 * span_w, int(st.session_state.surface_grid_n))
-                b_vals = np.linspace(b_min - 0.5 * span_b, b_max + 0.5 * span_b, int(st.session_state.surface_grid_n))
                 j_grid = np.zeros((len(b_vals), len(w_vals)), dtype=float)
-
                 for i, b_val in enumerate(b_vals):
                     for j, w_val in enumerate(w_vals):
                         w_vec = model.w.copy()
                         w_vec[w_idx] = float(w_val)
                         model_tmp.set_params(w_vec, float(b_val))
-                        j_grid[i, j] = model_tmp.loss(Xtr, ytr, reg_type=reg_type, reg_strength=reg_strength)
+                        j_grid[i, j] = model_tmp.loss(Xtr, ytr, reg_type=reg_type_now, reg_strength=reg_strength_now)
 
                 model_tmp.set_params(model.w.copy(), model.b)
-                current_j = model_tmp.loss(Xtr, ytr, reg_type=reg_type, reg_strength=reg_strength)
+                current_j = model_tmp.loss(Xtr, ytr, reg_type=reg_type_now, reg_strength=reg_strength_now)
 
                 history_points = {"w": [], "b": [], "j": [], "text": []}
                 for h in history:
@@ -771,14 +821,15 @@ with main:
                     if w_hist.size == 0:
                         continue
                     model_tmp.set_params(w_hist, b_hist)
-                    j_hist = model_tmp.loss(Xtr, ytr, reg_type=reg_type, reg_strength=reg_strength)
+                    j_hist = model_tmp.loss(Xtr, ytr, reg_type=reg_type_now, reg_strength=reg_strength_now)
                     history_points["w"].append(float(w_hist[w_idx] if w_hist.size > w_idx else w_hist[0]))
                     history_points["b"].append(b_hist)
                     history_points["j"].append(float(j_hist))
                     history_points["text"].append(f"iter={h.get('iter', '?')}")
 
                 gradient_arrow = None
-                next_step = _next_step_projection(model, batch_idx, cfg)
+                batch_idx = _ensure_next_batch_indices()
+                next_step = _next_step_projection(model, batch_idx, cfg_now)
                 if next_step is not None:
                     arrow_scale = float(st.session_state.surface_arrow_scale)
                     w1 = current_w + arrow_scale * (float(next_step["next"][f"w{w_idx}"]) - current_w)
@@ -786,7 +837,7 @@ with main:
                     w_vec = model.w.copy()
                     w_vec[w_idx] = w1
                     model_tmp.set_params(w_vec, b1)
-                    j1 = model_tmp.loss(Xtr, ytr, reg_type=reg_type, reg_strength=reg_strength)
+                    j1 = model_tmp.loss(Xtr, ytr, reg_type=reg_type_now, reg_strength=reg_strength_now)
                     gradient_arrow = {"w0": current_w, "b0": current_b, "j0": float(current_j), "w1": w1, "b1": b1, "j1": float(j1)}
 
                 st.plotly_chart(
@@ -802,8 +853,15 @@ with main:
                     use_container_width=True,
                 )
 
-    with st.expander("Evaluation", expanded=True):
-        # Current metrics
+    with viz_tabs[4]:
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("Current train J", f"{j_tr_now:.6f}" if np.isfinite(j_tr_now) else "nan")
+        with c2:
+            st.metric("Current test J", f"{j_te_now:.6f}" if np.isfinite(j_te_now) else "nan")
+        st.plotly_chart(fig_loss_history(st.session_state.history_metrics), use_container_width=True)
+
+    with viz_tabs[5]:
         c1, c2 = st.columns(2)
         with c1:
             st.markdown("### Current (train)")
@@ -820,8 +878,6 @@ with main:
 
         st.plotly_chart(fig_metrics_history(st.session_state.history_metrics), use_container_width=True)
 
-        # ROC
-        # Use probabilities on train/test
         train_roc = None
         test_roc = None
         if Xtr.size and ytr.size:
@@ -832,7 +888,6 @@ with main:
             test_roc = roc_curve_auc(yte, p_te)
 
         st.plotly_chart(fig_roc(train_roc, test_roc), use_container_width=True)
-
         if train_roc is not None:
             st.write({"train_auc": train_roc.get("auc"), "train_auc_defined": train_roc.get("defined", False)})
         if test_roc is not None:
