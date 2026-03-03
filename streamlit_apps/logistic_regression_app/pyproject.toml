@@ -9,7 +9,7 @@ description = "Streamlit app to explore ML Logistic Regression Study"
 readme = "ml_logistic_study_app.md"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
-authors = [{name = jparisu}]
+authors = [{name = "jparisu"}]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ml_classification_study"]
