@@ -6,6 +6,24 @@ from typing import Dict, Any, Tuple
 import numpy as np
 
 
+def _trapezoid_integral(y: np.ndarray, x: np.ndarray) -> float:
+    """NumPy-version-safe trapezoidal integration."""
+    trapezoid_fn = getattr(np, "trapezoid", None)
+    if trapezoid_fn is not None:
+        return float(trapezoid_fn(y, x))
+
+    trapz_fn = getattr(np, "trapz", None)
+    if trapz_fn is not None:
+        return float(trapz_fn(y, x))
+
+    # Last-resort fallback if neither helper exists in runtime.
+    y = np.asarray(y, dtype=float).reshape(-1)
+    x = np.asarray(x, dtype=float).reshape(-1)
+    if y.size < 2 or x.size < 2:
+        return 0.0
+    return float(np.sum((x[1:] - x[:-1]) * (y[1:] + y[:-1]) * 0.5))
+
+
 def confusion_counts(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, int]:
     y_true = np.asarray(y_true, dtype=int).reshape(-1)
     y_pred = np.asarray(y_pred, dtype=int).reshape(-1)
@@ -92,5 +110,5 @@ def roc_curve_auc(y_true: np.ndarray, y_score: np.ndarray) -> Dict[str, Any]:
     tpr_arr = np.asarray(tpr, dtype=float)
 
     # AUC via trapezoidal rule on FPR axis
-    auc = float(np.trapz(tpr_arr, fpr_arr))
+    auc = _trapezoid_integral(tpr_arr, fpr_arr)
     return {"fpr": fpr_arr, "tpr": tpr_arr, "thresholds": np.asarray(thresholds, dtype=float), "auc": auc, "defined": True}

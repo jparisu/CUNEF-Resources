@@ -5,6 +5,14 @@
 ```bash
 pip install streamlit plotly numpy pandas
 streamlit run app.py
+
+## Cloud compatibility check (local)
+
+Run this before pushing to catch dependency/runtime issues similar to Streamlit Cloud:
+
+```bash
+bash scripts/cloud_compat_check.sh
+```
 ```
 
 ## Files
