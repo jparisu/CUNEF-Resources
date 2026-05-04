@@ -14,7 +14,7 @@ train_df.to_csv("../risk_train_dataset.csv", index=False)
 
 ###############
 # Test dataset
-for seed in [1, 24, 42, 20260326]:
+for seed in [1, 24, 42, 20260326, 20260426]:
 
     # generate a test dataset with a different seed and a lower outlier probability
     test_df, _ = generate_dataset(
